@@ -1,0 +1,19 @@
+#######################################
+# Syntax Coloring Map For statusLED
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+statusLED	KEYWORD
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+flash	KEYWORD2
+on	KEYWORD2
+off	KEYWORD2
+pwm	KEYWORD2
