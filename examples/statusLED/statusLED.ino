@@ -17,7 +17,7 @@ void setup() {
   greenLED.begin(5); // Green LED on pin 5
   redLED.begin(6); // Red LED on pin 6
 
-// LED demo (1x executed)
+  // LED demo (1x executed)
   redLED.on();
   delay(2000);
   greenLED.on();
@@ -35,6 +35,4 @@ void loop() {
   // Flashing sequences
   redLED.flash(140, 150, 700, 5); // ON, OFF, PAUSE, PULSES
   greenLED.flash(40, 350, 0, 0);
-
-
 }
