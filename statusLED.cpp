@@ -42,7 +42,7 @@ void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
       break;
 
     case 2: //---- Step 2 (ON duration)
-      if (currentMillis > _previousMillis + _onDuration) {
+      if (currentMillis - _previousMillis >= _onDuration) {
         _state = 3;
       }
       break;
@@ -54,7 +54,7 @@ void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
       break;
 
     case 4: //---- Step 4 (OFF duration)
-      if (currentMillis > _previousMillis + _offDuration) {
+      if (currentMillis - _previousMillis >= _offDuration) {
         _state = 5;
       }
       break;
@@ -70,7 +70,7 @@ void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
       break;
 
     case 6: //---- Step 4 (Pause duration)
-      if (currentMillis > _previousMillis + _pauseDuration) {
+      if (currentMillis - _previousMillis >= _pauseDuration) {
         _state = 0;
       }
       break;
