@@ -11,7 +11,7 @@
 // Class definition (header) ========================================================================
 class statusLED {
   public:
-    statusLED();
+    statusLED(bool inverse);
     void begin(int pin1);
     void flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses);
     void on();
@@ -28,6 +28,7 @@ class statusLED {
     int _brightness;
     unsigned long _previousMillis = 0;
     byte _state = 0;
+    bool _inverse;
 };
 
 #endif
