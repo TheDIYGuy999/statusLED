@@ -7,8 +7,8 @@
 #include <statusLED.h> // TheDIYGuy999 library: https://github.com/TheDIYGuy999/statusLED
 
 // Status LED objects
-statusLED greenLED;
-statusLED redLED;
+statusLED greenLED(false); // False = not inversed
+statusLED redLED(false);
 
 void setup() {
   // put your setup code here, to run once:
@@ -17,7 +17,7 @@ void setup() {
   greenLED.begin(5); // Green LED on pin 5
   redLED.begin(6); // Red LED on pin 6
 
-  // LED demo (1x executed)
+// LED demo (1x executed)
   redLED.on();
   delay(2000);
   greenLED.on();
