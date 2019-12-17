@@ -1,6 +1,6 @@
-#status LED Arduino library
+# statusLED Arduino library
 
-This is an Arduino library for controlling status LED
+This is an Arduino library for easy LED control: dimming, flash sequences etc.
 
 ## Features:
 - Switching the LED on and off
@@ -8,9 +8,13 @@ This is an Arduino library for controlling status LED
 - Blinking the LED
 - Flashing sequences (e.g. for visualization of numbers)
 - Inverse mode, if your LED is wired between output pin and vcc
+- Works on ATmega328P, ATmega32U4, ESP32
+
+## Changes:
+- December 2019: ESP32 support added
 
 ## Usage
 
 See [example](https://github.com/TheDIYGuy999/statusLED/blob/master/examples/statusLED/statusLED.ino).
 
-(c) 2016 TheDIYGuy999
+(c) 2016 - 2019 TheDIYGuy999
