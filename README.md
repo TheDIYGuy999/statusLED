@@ -12,6 +12,7 @@ This is an Arduino library for easy LED control: dimming, flash sequences etc.
 
 ## Changes:
 - December 2019: ESP32 support added
+- December 2019: ESP32 now with 16 PWM channels instead of 8
 
 ## Usage
 

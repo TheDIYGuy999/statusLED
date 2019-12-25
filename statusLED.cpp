@@ -4,6 +4,7 @@
  Released into the public domain.
  
  Dez. 2019: added ESP32 support
+ Dez. 2019: replaced sigmaDelta function with ledc funvtion, so we can use more 16 instead of 8 timers
  */
 
 #include "Arduino.h"
@@ -32,10 +33,10 @@ void statusLED::begin(int pin1, int channel, int frequency) {
     _pin1 = pin1;
     _channel = channel;
     _frequency = frequency;
-    sigmaDeltaSetup(_channel, _frequency);
-    sigmaDeltaAttachPin(_pin1, _channel);
-    if (_inverse) sigmaDeltaWrite(_channel, 255);
-    else sigmaDeltaWrite(_channel, 0);
+    ledcSetup(_channel, _frequency, 8); // 8 bit resolution
+    ledcAttachPin(_pin1, _channel);
+    if (_inverse) ledcWrite(_channel, 255);
+    else ledcWrite(_channel, 0);
 }
 #endif
 
@@ -59,8 +60,8 @@ void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
             if (_inverse) digitalWrite(_pin1, LOW);
             else digitalWrite(_pin1, HIGH);
 #else
-            if (_inverse) sigmaDeltaWrite(_channel, 0);
-            else sigmaDeltaWrite(_channel, 255);
+            if (_inverse) ledcWrite(_channel, 0);
+            else ledcWrite(_channel, 255);
 #endif
             _pulseCnt ++; // Increase loop counter
             _previousMillis = currentMillis;
@@ -78,8 +79,8 @@ void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
             if (_inverse) digitalWrite(_pin1, HIGH);
             else digitalWrite(_pin1, LOW);
 #else
-            if (_inverse) sigmaDeltaWrite(_channel, 255);
-            else sigmaDeltaWrite(_channel, 0);
+            if (_inverse) ledcWrite(_channel, 255);
+            else ledcWrite(_channel, 0);
 #endif
             _previousMillis = currentMillis;
             _state = 4;
@@ -117,8 +118,8 @@ void statusLED::on() {
     if (_inverse) digitalWrite(_pin1, LOW);
     else digitalWrite(_pin1, HIGH);
 #else
-    if (_inverse) sigmaDeltaWrite(_channel, 0);
-    else sigmaDeltaWrite(_channel, 255);
+    if (_inverse) ledcWrite(_channel, 0);
+    else ledcWrite(_channel, 255);
 #endif
 }
 
@@ -130,8 +131,8 @@ void statusLED::off() {
     if (_inverse) digitalWrite(_pin1, HIGH);
     else digitalWrite(_pin1, LOW);
 #else
-    if (_inverse) sigmaDeltaWrite(_channel, 255);
-    else sigmaDeltaWrite(_channel, 0);
+    if (_inverse) ledcWrite(_channel, 255);
+    else ledcWrite(_channel, 0);
 #endif
 }
 
@@ -147,8 +148,8 @@ void statusLED::pwm(int brightness) {
     else analogWrite(_pin1, _brightness);
     
 #else // ESP32 platform (analogWrite not supported)
-    if (_inverse) sigmaDeltaWrite(_channel, 255 - _brightness);
-    else sigmaDeltaWrite(_channel, _brightness);
+    if (_inverse) ledcWrite(_channel, 255 - _brightness);
+    else ledcWrite(_channel, _brightness);
     
 #endif
 }
