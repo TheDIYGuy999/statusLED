@@ -42,7 +42,7 @@ void statusLED::begin(int pin1, int channel, int frequency) {
 
 
 // Flash function ************************************************************
-void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses) {
+bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses) {
     _onDuration = onDuration;
     _offDuration = offDuration;
     _pauseDuration = pauseDuration;
@@ -53,6 +53,7 @@ void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
     switch (_state) {
         case 0: //---- Step 0 (do nothing)
             _state = 1;
+            _start = true;
             break;
             
         case 1: //---- Step 1 (LED on)
@@ -71,6 +72,7 @@ void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
         case 2: //---- Step 2 (ON duration)
             if (currentMillis - _previousMillis >= _onDuration) {
                 _state = 3;
+                _start = false;
             }
             break;
             
@@ -98,7 +100,7 @@ void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
                 _previousMillis = currentMillis;
                 _state = 6; // Sequence finished
             } else {
-                _state = 0;
+                _state = 1;
             }
             break;
             
@@ -107,7 +109,9 @@ void statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
                 _state = 0;
             }
             break;
+
     }
+    return _start; // Report back, if we are back @ step 0 (added 2020 01 03)
 }
 
 // On function ************************************************************

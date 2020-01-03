@@ -21,7 +21,7 @@ class statusLED {
     void begin(int pin1, int channel, int frequency);
 #endif
     
-    void flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses);
+    bool flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses);
     void on();
     void off();
     void pwm(int brightness);
@@ -39,6 +39,7 @@ class statusLED {
     unsigned long _previousMillis = 0;
     byte _state = 0;
     bool _inverse;
+    bool _start;
 };
 
 #endif
