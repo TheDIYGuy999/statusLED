@@ -18,7 +18,7 @@ class statusLED {
 #if defined __AVR_ATmega32U4__ || __AVR_ATmega328P__ // AVR platform
     void begin(int pin1);
 #else // ESP32 platform
-    void begin(int pin1, int channel, int frequency);
+    void begin(int pin1, int channel, int frequency, int resolution = 8);
 #endif
     
     bool flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses);

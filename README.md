@@ -15,6 +15,7 @@ This is an Arduino library for easy LED control: dimming, flash sequences etc.
 - December 2019: ESP32 support added
 - December 2019: ESP32 now with 16 PWM channels instead of 8
 - January 2020: the .flash() function is now a boolean and returning "true", if the sequence is in start position. Allows to synchronize the indicator sound with the LED. Used in: https://github.com/TheDIYGuy999/Rc_Engine_Sound_ESP32
+- January 2020: experimental support for optional 16bit timer support on ESP32 added. Required for v2.0 of: https://github.com/TheDIYGuy999/Rc_Engine_Sound_ESP32
 
 ## Usage
 

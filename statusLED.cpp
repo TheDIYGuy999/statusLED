@@ -29,11 +29,11 @@ void statusLED::begin(int pin1) {
 }
 
 #else // ESP32 platform (using channel 0 will affect millis()! )
-void statusLED::begin(int pin1, int channel, int frequency) {
+void statusLED::begin(int pin1, int channel, int frequency, int resolution) {
     _pin1 = pin1;
     _channel = channel;
     _frequency = frequency;
-    ledcSetup(_channel, _frequency, 8); // 8 bit resolution
+    ledcSetup(_channel, _frequency, resolution); // 8 bit resolution, if no input argument
     ledcAttachPin(_pin1, _channel);
     if (_inverse) ledcWrite(_channel, 255);
     else ledcWrite(_channel, 0);
