@@ -46,7 +46,7 @@ void loop() {
   // put your main code here, to run repeatedly:
 
   // Flashing sequences
-  redLED.flash(140, 150, 700, 5); // ON, OFF, PAUSE, PULSES
+  redLED.flash(140, 150, 700, 5, 70); // ON, OFF, PAUSE, PULSES, (OPTIONAL DELAY FOR FIRST PASS)
   greenLED.flash(40, 350, 0, 0);
 
 

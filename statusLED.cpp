@@ -42,21 +42,28 @@ void statusLED::begin(int pin1, int channel, int frequency, int resolution) {
 
 
 // Flash function ************************************************************
-bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses) {
+bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses, int delay) {
     _onDuration = onDuration;
     _offDuration = offDuration;
     _pauseDuration = pauseDuration;
     _pulses = pulses;
+    _delay = delay;
     
     unsigned long currentMillis = millis();
     
     switch (_state) {
         case 0: //---- Step 0 (do nothing)
+            _previousMillis = currentMillis;
             _state = 1;
-            _start = true;
             break;
             
-        case 1: //---- Step 1 (LED on)
+        case 1: //---- Step 1 (Start delay for first pass)
+            if (currentMillis - _previousMillis >= _delay) {
+                _state = 2;
+            }
+            break;
+            
+        case 2: //---- Step 2 (LED on)
 #if defined __AVR_ATmega32U4__ || defined __AVR_ATmega328P__
             if (_inverse) digitalWrite(_pin1, LOW);
             else digitalWrite(_pin1, HIGH);
@@ -66,17 +73,18 @@ bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
 #endif
             _pulseCnt ++; // Increase loop counter
             _previousMillis = currentMillis;
-            _state = 2;
+            _state = 3;
+             _start = true;
             break;
             
-        case 2: //---- Step 2 (ON duration)
+        case 3: //---- Step 3 (ON duration)
             if (currentMillis - _previousMillis >= _onDuration) {
-                _state = 3;
+                _state = 4;
                 _start = false;
             }
             break;
             
-        case 3: //---- Step 3 (LED off)
+        case 4: //---- Step 4 (LED off)
 #if defined __AVR_ATmega32U4__ || defined __AVR_ATmega328P__
             if (_inverse) digitalWrite(_pin1, HIGH);
             else digitalWrite(_pin1, LOW);
@@ -85,28 +93,28 @@ bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
             else ledcWrite(_channel, 0);
 #endif
             _previousMillis = currentMillis;
-            _state = 4;
+            _state = 5;
             break;
             
-        case 4: //---- Step 4 (OFF duration)
+        case 5: //---- Step 5 (OFF duration)
             if (currentMillis - _previousMillis >= _offDuration) {
-                _state = 5;
+                _state = 6;
             }
             break;
             
-        case 5: //---- Step 5 (Flash sequence finished?)
+        case 6: //---- Step 6 (Flash sequence finished?)
             if (_pulseCnt >= _pulses) {
                 _pulseCnt = 0;
                 _previousMillis = currentMillis;
-                _state = 6; // Sequence finished
+                _state = 7; // Sequence finished
             } else {
-                _state = 1;
+                _state = 2;
             }
             break;
             
-        case 6: //---- Step 4 (Pause duration)
+        case 7: //---- Step 7 (Pause duration)
             if (currentMillis - _previousMillis >= _pauseDuration) {
-                _state = 0;
+                _state = 2;
             }
             break;
 
