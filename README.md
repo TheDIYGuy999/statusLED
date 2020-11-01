@@ -17,6 +17,7 @@ This is an Arduino library for easy LED control: dimming, flash sequences etc.
 - January 2020: the .flash() function is now a boolean and returning "true", if the sequence is in start position. Allows to synchronize the indicator sound with the LED. Used in: https://github.com/TheDIYGuy999/Rc_Engine_Sound_ESP32
 - January 2020: experimental support for optional 16bit timer support on ESP32 added. Required for v2.0 of: https://github.com/TheDIYGuy999/Rc_Engine_Sound_ESP32
 - February 2020: optional delay for first flash() pass added. Allows to program offsets between different LED. Required for v2.6 of: https://github.com/TheDIYGuy999/Rc_Engine_Sound_ESP32
+- November 2020: optional ramp (ESP32 only) for flash() and off() added. Allows to switch indicators on and off softly. Required for v5.7 of: https://github.com/TheDIYGuy999/Rc_Engine_Sound_ESP32
 
 ## Usage
 

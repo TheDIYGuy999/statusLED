@@ -42,15 +42,18 @@ void statusLED::begin(int pin1, int channel, int frequency, int resolution) {
 
 
 // Flash function ************************************************************
-bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses, int delay) {
+bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses, int delay, int bulbSimRamp) {
     _onDuration = onDuration;
     _offDuration = offDuration;
     _pauseDuration = pauseDuration;
+    _bulbSimRamp = bulbSimRamp;
     _pulses = pulses;
     _delay = delay;
+    _flashBrightness;
     
     unsigned long currentMillis = millis();
     
+// State machine
     switch (_state) {
         case 0: //---- Step 0 (do nothing)
             _previousMillis = currentMillis;
@@ -68,13 +71,15 @@ bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
             if (_inverse) digitalWrite(_pin1, LOW);
             else digitalWrite(_pin1, HIGH);
 #else
-            if (_inverse) ledcWrite(_channel, 0);
-            else ledcWrite(_channel, 255);
+            //if (_inverse) ledcWrite(_channel, 0);
+            //else ledcWrite(_channel, 255);
+            _up = true;
+            _down = false;
 #endif
             _pulseCnt ++; // Increase loop counter
             _previousMillis = currentMillis;
             _state = 3;
-             _start = true;
+            _start = true;
             break;
             
         case 3: //---- Step 3 (ON duration)
@@ -89,8 +94,10 @@ bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
             if (_inverse) digitalWrite(_pin1, HIGH);
             else digitalWrite(_pin1, LOW);
 #else
-            if (_inverse) ledcWrite(_channel, 255);
-            else ledcWrite(_channel, 0);
+            //if (_inverse) ledcWrite(_channel, 255);
+            //else ledcWrite(_channel, 0);
+            _down = true;
+            _up = false;
 #endif
             _previousMillis = currentMillis;
             _state = 5;
@@ -117,8 +124,43 @@ bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
                 _state = 2;
             }
             break;
-
+    } // End of state machine
+    
+#if defined __AVR_ATmega32U4__ || defined __AVR_ATmega328P__
+    // No actions
+#else
+    if (bulbSimRamp > 0) {
+        // Ramp brightness
+        if (micros() - _previousFlashRampMillis >= _bulbSimRamp) {
+            _previousFlashRampMillis = micros();
+            if (_up && _flashBrightness < 255) {
+                _flashBrightness ++;
+            }
+            if (_flashBrightness == 255 || _down) _up = false;
+            
+            if (_down && _flashBrightness > 0) {
+                _flashBrightness --;
+            }
+            if (_flashBrightness == 0) _down = false;
+        }
     }
+    else {
+        // Change brightness immediately
+        if (_up) {
+            _flashBrightness = 255;
+            _up = false;
+        }
+        if (_down) {
+            _flashBrightness = 0;
+            _down = false;
+        }
+    }
+    
+    // Write brightness
+    if (_inverse) ledcWrite(_channel, 255 - _flashBrightness);
+    else ledcWrite(_channel, _flashBrightness);
+#endif
+    
     return _start; // Report back, if we are back @ step 0 (added 2020 01 03)
 }
 
@@ -136,15 +178,30 @@ void statusLED::on() {
 }
 
 // Off function ************************************************************
-void statusLED::off() {
+void statusLED::off(int bulbSimRamp) {
     _state = 0;
     _pulseCnt = 0;
+    _offBulbSimRamp = bulbSimRamp;
 #if defined __AVR_ATmega32U4__ || defined __AVR_ATmega328P__
     if (_inverse) digitalWrite(_pin1, HIGH);
     else digitalWrite(_pin1, LOW);
 #else
-    if (_inverse) ledcWrite(_channel, 255);
-    else ledcWrite(_channel, 0);
+    //if (_inverse) ledcWrite(_channel, 255);
+    //else ledcWrite(_channel, 0);
+    if (_offBulbSimRamp > 0) {
+        // Ramp brightness
+        if (micros() - _previousOffRampMillis >= _offBulbSimRamp) {
+            _previousOffRampMillis = micros();
+            if (_offBrightness > 0) _offBrightness --;
+        }
+    }
+    else _offBrightness = 0; // Change brightness immediately
+    
+    // Write brightness
+    if (_inverse) ledcWrite(_channel, 255 - _offBrightness);
+    else ledcWrite(_channel, _offBrightness);
+    
+    
 #endif
 }
 
