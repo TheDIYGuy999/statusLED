@@ -42,7 +42,7 @@ void statusLED::begin(int pin1, int channel, int frequency, int resolution) {
 
 
 // Flash function ************************************************************
-bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses, int delay, int bulbSimRamp) {
+bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsigned long pauseDuration, int pulses, int delay, int bulbSimRamp, int flashOffBrightness) {
     _onDuration = onDuration;
     _offDuration = offDuration;
     _pauseDuration = pauseDuration;
@@ -50,6 +50,7 @@ bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
     _pulses = pulses;
     _delay = delay;
     _flashBrightness;
+    _flashOffBrightness = flashOffBrightness;
     
     unsigned long currentMillis = millis();
     
@@ -138,10 +139,10 @@ bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
             }
             if (_flashBrightness == 255 || _down) _up = false;
             
-            if (_down && _flashBrightness > 0) {
+            if (_down && _flashBrightness > _flashOffBrightness) {
                 _flashBrightness --;
             }
-            if (_flashBrightness == 0) _down = false;
+            if (_flashBrightness == _flashOffBrightness) _down = false;
         }
     }
     else {
@@ -151,7 +152,7 @@ bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
             _up = false;
         }
         if (_down) {
-            _flashBrightness = 0;
+            _flashBrightness = _flashOffBrightness;
             _down = false;
         }
     }
@@ -178,10 +179,11 @@ void statusLED::on() {
 }
 
 // Off function ************************************************************
-void statusLED::off(int bulbSimRamp) {
+void statusLED::off(int bulbSimRamp, int _offOffBrightness) {
     _state = 0;
     _pulseCnt = 0;
     _offBulbSimRamp = bulbSimRamp;
+    _offOffBrightness = _offOffBrightness;
 #if defined __AVR_ATmega32U4__ || defined __AVR_ATmega328P__
     if (_inverse) digitalWrite(_pin1, HIGH);
     else digitalWrite(_pin1, LOW);
@@ -192,10 +194,10 @@ void statusLED::off(int bulbSimRamp) {
         // Ramp brightness
         if (micros() - _previousOffRampMillis >= _offBulbSimRamp) {
             _previousOffRampMillis = micros();
-            if (_offBrightness > 0) _offBrightness --;
+            if (_offBrightness > _offOffBrightness) _offBrightness --;
         }
     }
-    else _offBrightness = 0; // Change brightness immediately
+    else _offBrightness = _offOffBrightness; // Change brightness immediately
     
     // Write brightness
     if (_inverse) ledcWrite(_channel, 255 - _offBrightness);
