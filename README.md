@@ -21,6 +21,7 @@ This is an Arduino library for easy LED control: dimming, flash sequences etc.
 - v1.6: Optional ramp (ESP32 only) for flash() and off() added. Allows to switch indicators on and off softly. Required for v5.7 of: https://github.com/TheDIYGuy999/Rc_Engine_Sound_ESP32
 - v1.7: Adjustable off brightness for flash()
 - v1.8: Arduino 1.5 structure, so it's not detected as "legacy" library anymore
+- v1.8.1 potential compiler error solved
 
 ## Usage
 

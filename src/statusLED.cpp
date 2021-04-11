@@ -1,6 +1,6 @@
 /*
  statusLED.cpp - Library for status LED control (blinking, flash sequences, on, off, pwm)
- Created by TheDIYGuy999 May 2016 - Dez. 2019
+ Created by TheDIYGuy999 May 2016 - April 2021
  Released into the public domain.
  
  Dez. 2019: added ESP32 support
@@ -49,7 +49,6 @@ bool statusLED::flash(unsigned long onDuration, unsigned long offDuration, unsig
     _bulbSimRamp = bulbSimRamp;
     _pulses = pulses;
     _delay = delay;
-    _flashBrightness;
     _flashOffBrightness = flashOffBrightness;
     
     unsigned long currentMillis = millis();
